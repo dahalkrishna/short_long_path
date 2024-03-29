@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 const int N = 10001; // Maximum number of nodes
 
 vector<pair<int, int> > adj[N]; // Adjacency list: {destination, weight}
