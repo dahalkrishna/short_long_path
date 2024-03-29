@@ -9,7 +9,7 @@
 
 using namespace std;
 
-
+// #define DEBUG
 const int N = 10001; // Maximum number of nodes
 
 vector<pair<int, int> > adj[N]; // Adjacency list: {destination, weight}
@@ -160,20 +160,32 @@ void ReadFile(ifstream& eventfile) {
 	
 
 int main(int argc, char *argv[]) {
+	//cout <<" test";
 	int mindelay[500];
 	int maxdelay[500];
 	for (int i = 0; i < 500; i++) {	mindelay[i] = INT_MAX;	maxdelay[i] = INT_MIN;	}
 	ifstream eventfile;
 	string file_path, file_num, benchmark;
-	file_num = argv[1];
-	benchmark = argv[2];
+	#ifdef DEBUG
+		file_num = "0";
+		benchmark = "c432";
+	#endif
+	#ifndef DEBUG
+		file_num = argv[1];
+		benchmark = argv[2];
+	#endif
 	input_list.clear();
 	output_list.clear();
 	adj->clear();
 	input_list.shrink_to_fit();
 	output_list.shrink_to_fit();
 	adj->shrink_to_fit();
-	file_path = "healthy_inst/"+ string(benchmark)+"_"+string(file_num)+"_event.txt";
+	#ifdef DEBUG
+		file_path = "../healthy_inst/"+ string(benchmark)+"_"+string(file_num)+"_event.txt";
+	#endif
+	#ifndef DEBUG
+		file_path = "healthy_inst/"+ string(benchmark)+"_"+string(file_num)+"_event.txt";
+	#endif
 	eventfile.open(file_path);
 	ReadFile(eventfile);
 	eventfile.close();
@@ -184,13 +196,13 @@ int main(int argc, char *argv[]) {
 	for (int j : output_list) {
 			for (int i : input_list) {
 				short_delay_list[i][j] = INT_MAX;
-			long_delay_list[i][j] = INT_MIN;
+				long_delay_list[i][j] = INT_MIN;
 		}
 	}	
 	for (int i : input_list) {
 		sourceNode = i;
 		dijkstra(sourceNode,n);
-		// longestPath(sourceNode,n);
+		longestPath(sourceNode,n);
 	}
 	int k = 0;
 	ofstream mindelayfile;
@@ -198,7 +210,8 @@ int main(int argc, char *argv[]) {
 	for (int j : output_list) {
 		int temp_short = INT_MAX;
 		for (int i : input_list) {
-			if(short_delay_list[i][j] != 0)
+			if((short_delay_list[i][j] != INT_MAX) ) 
+				// cout<<"Short delay from "<<i<<" to "<<j<<": "<<temp_short<<endl;
 				if(short_delay_list[i][j] < temp_short){
 					temp_short = short_delay_list[i][j];
 					cout<<"Short delay from "<<i<<" to "<<j<<": "<<temp_short<<endl;
@@ -217,23 +230,23 @@ int main(int argc, char *argv[]) {
 	k = 0;
 	ofstream maxdelayfile;
 	// maxdelayfile.open("maxdelay.csv", ios::app);
-	// for (int j : output_list) {
-	// 	int temp_long = INT_MIN;
-	// 	for (int i : input_list) {
-	// 		if(long_delay_list[i][j] != 0)
-	// 			if(long_delay_list[i][j] > temp_long){
-	// 				temp_long = long_delay_list[i][j];
-	// 				cout<<"Long delay from "<<i<<" to "<<j<<": "<<temp_long<<endl;
-	// 			}
-	// 	}
-	// 	// cout << "Max long delay "<<j<<": "<< temp_long/3 << endl;
+	for (int j : output_list) {
+		int temp_long = INT_MIN;
+		for (int i : input_list) {
+			if(long_delay_list[i][j] != INT_MIN && j>i)
+				if(long_delay_list[i][j] > temp_long){
+					temp_long = long_delay_list[i][j];
+					cout<<"Long delay from "<<i<<" to "<<j<<": "<<temp_long<<endl;
+				}
+		}
+		// cout << "Max long delay "<<j<<": "<< temp_long/3 << endl;
 	// 	maxdelayfile << temp_long/3 <<",";
 	// 	if (maxdelay[k] < temp_long/3){
 	// 		maxdelay[k] = temp_long/3;
 	// 	}
 	// 	k++;
 	// 	// cout << endl;
-	// }
+	}
 	// maxdelayfile << endl;
 	// maxdelayfile.close();
 	return 0;
