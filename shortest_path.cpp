@@ -106,7 +106,7 @@ void dijkstra(int src, int n) {
 void ReadFile(ifstream& eventfile) {
 	string line, token;
 	int source,delay,dest, i;
-	while (getline(eventfile, line)!=NULL) {
+	while (getline(eventfile, line) ) {
 		//skip lines that begin with C, I and O
 		if(line[0] == 'C') {
 			continue;
@@ -142,7 +142,6 @@ void ReadFile(ifstream& eventfile) {
 		stringstream ss(line);
 		// skip the gate name
 		ss >> token;
-		cout<< token<<endl;        
 		//extract the gate delay and convert to int
 		ss >> token;
 		token.erase(token.find("ns"));
@@ -173,7 +172,7 @@ int main(int argc, char *argv[]) {
 	input_list.shrink_to_fit();
 	output_list.shrink_to_fit();
 	adj->shrink_to_fit();
-	file_path = "./healthy_inst/"+ string(benchmark)+"_"+string(file_num)+"_event.txt";
+	file_path = "healthy_inst/"+ string(benchmark)+"_"+string(file_num)+"_event.txt";
 	eventfile.open(file_path);
 	ReadFile(eventfile);
 	eventfile.close();
@@ -189,7 +188,6 @@ int main(int argc, char *argv[]) {
 	}	
 	for (int i : input_list) {
 		sourceNode = i;
-		cout<< i<< "\t";
 		dijkstra(sourceNode,n);
 		// longestPath(sourceNode,n);
 	}
